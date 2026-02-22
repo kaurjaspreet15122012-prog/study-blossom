@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Blossom Queen 👑</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+body{
+margin:0;
+font-family:'Poppins',sans-serif;
+background:linear-gradient(135deg,#ffc0cb,#f8a5c2,#ffd6e8);
+transition:0.4s;
+overflow-x:hidden;
+}
+
+.dark{
+background:linear-gradient(135deg,#1a001f,#3d0066);
+color:white;
+}
+
+.app{
+max-width:430px;
+margin:auto;
+padding:15px;
+}
+
+.card{
+background:white;
+padding:15px;
+border-radius:20px;
+margin-bottom:15px;
+box-shadow:0 8px 20px rgba(0,0,0,0.1);
+animation:fadeIn 0.6s ease;
+}
+
+.dark .card{
+background:#2c003e;
+color:white;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(10px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+h2{color:#ff69b4;margin-top:0;}
+
+button{
+background:#ff69b4;
+border:none;
+padding:7px 12px;
+border-radius:15px;
+color:white;
+cursor:pointer;
+margin-top:5px;
+}
+
+input,select{
+width:100%;
+padding:6px;
+margin-top:5px;
+border-radius:10px;
+border:1px solid #ddd;
+}
+
+.todo-item{
+display:flex;
+justify-content:space-between;
+margin-top:5px;
+}
+
+.progress-bar{
+height:12px;
+background:#ffe4ec;
+border-radius:10px;
+overflow:hidden;
+margin-top:5px;
+}
+.progress{
+height:100%;
+background:#ff69b4;
+width:0%;
+}
+
+#flashcardBox{
+background:#ffe4ec;
+padding:15px;
+border-radius:15px;
+margin-top:10px;
+text-align:center;
+cursor:pointer;
+min-height:60px;
+}
+
+.sparkle,.bubble{
+position:fixed;
+width:8px;
+height:8px;
+background:white;
+border-radius:50%;
+opacity:0.7;
+}
+
+.sparkle{
+animation:sparkle 2s linear infinite;
+}
+@keyframes sparkle{
+0%{transform:translateY(0);opacity:1;}
+100%{transform:translateY(-200px);opacity:0;}
+}
+
+.bubble{
+bottom:-20px;
+animation:floatUp 6s linear infinite;
+}
+@keyframes floatUp{
+from{transform:translateY(0);}
+to{transform:translateY(-900px);}
+}
+
+.hidden{display:none;}
+
+.profile-pic{
+width:70px;
+height:70px;
+border-radius:50%;
+object-fit:cover;
+margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- LOGIN -->
+<div class="card" id="loginCard">
+<h2>💖 Login</h2>
+<input type="text" id="username" placeholder="Enter your name">
+<input type="file" id="profileUpload">
+<button onclick="login()">Enter ✨</button>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" class="hidden">
+
+<div class="card">
+<h2>👑 Welcome <span id="userDisplay"></span></h2>
+<img id="profilePic" class="profile-pic">
+<button onclick="toggleTheme()">🌙 Toggle Theme</button>
+</div>
+
+<div class="card">
+<h2>🌷 Mood</h2>
+<select id="moodSelect">
+<option>😊 Happy</option>
+<option>😴 Tired</option>
+<option>😰 Stressed</option>
+<option>🤩 Motivated</option>
+</select>
+<button onclick="saveMood()">Save</button>
+<p id="savedMood"></p>
+</div>
+
+<div class="card">
+<h2>🎯 Daily Goal</h2>
+<input id="goalInput" placeholder="Finish chapter 5">
+<button onclick="saveGoal()">Save</button>
+<p id="goalDisplay"></p>
+</div>
+
+<div class="card">
+<h2>✅ To-Do</h2>
+<input id="todoInput" placeholder="Add task">
+<button onclick="addTodo()">Add</button>
+<div id="todoList"></div>
+</div>
+
+<div class="card">
+<h2>📅 Weekly Planner</h2>
+<input id="plannerInput" placeholder="Monday - Math">
+<button onclick="addPlan()">Add</button>
+<div id="plannerList"></div>
+</div>
+
+<div class="card">
+<h2>🌊 Water</h2>
+<p><span id="waterCount">0</span>/8</p>
+<button onclick="addWater()">Drink 💧</button>
+<div class="progress-bar"><div class="progress" id="waterProgress"></div></div>
+</div>
+
+<div class="card">
+<h2>🔥 Study Streak</h2>
+<p><span id="streakCount">0</span> Days</p>
+<button onclick="updateStreak()">I Studied Today 💪</button>
+</div>
+
+<div class="card">
+<h2>⏰ Pomodoro</h2>
+<h3 id="timer">25:00</h3>
+<button onclick="startTimer()">Start</button>
+<button onclick="resetTimer()">Reset</button>
+<p>Sessions: <span id="pomodoroCount">0</span></p>
+</div>
+
+<div class="card">
+<h2>🧠 Flashcards</h2>
+<input id="flashQ" placeholder="Question">
+<input id="flashA" placeholder="Answer">
+<button onclick="addFlashcard()">Add</button>
+<div id="flashcardBox" onclick="flipCard()">Click to Flip</div>
+</div>
+
+<div class="card">
+<h2>🎧 Sounds</h2>
+<button onclick="playLofi()">Lofi</button>
+<button onclick="playRain()">Rain</button>
+<button onclick="stopSound()">Stop</button>
+<audio id="lofi" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+<audio id="rain" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"></audio>
+</div>
+
+</div>
+</div>
+
+<script>
+
+/* Sparkles */
+setInterval(()=>{
+let s=document.createElement("div");
+s.className="sparkle";
+s.style.left=Math.random()*100+"%";
+s.style.top="100%";
+document.body.appendChild(s);
+setTimeout(()=>s.remove(),2000);
+},300);
+
+/* Bubbles */
+setInterval(()=>{
+let b=document.createElement("div");
+b.className="bubble";
+b.style.left=Math.random()*100+"%";
+document.body.appendChild(b);
+setTimeout(()=>b.remove(),6000);
+},800);
+
+/* LOGIN */
+function login(){
+let name=document.getElementById("username").value;
+if(!name)return;
+localStorage.setItem("username",name);
+let file=document.getElementById("profileUpload").files[0];
+if(file){
+let reader=new FileReader();
+reader.onload=function(e){
+localStorage.setItem("profilePic",e.target.result);
+loadUser();
+}
+reader.readAsDataURL(file);
+}else{
+loadUser();
+}
+}
+function loadUser(){
+let name=localStorage.getItem("username");
+if(name){
+document.getElementById("loginCard").classList.add("hidden");
+document.getElementById("mainApp").classList.remove("hidden");
+document.getElementById("userDisplay").innerText=name;
+document.getElementById("profilePic").src=localStorage.getItem("profilePic")||"";
+}
+}
+loadUser();
+
+/* THEME */
+function toggleTheme(){document.body.classList.toggle("dark");}
+
+/* MOOD */
+function saveMood(){
+let mood=document.getElementById("moodSelect").value;
+localStorage.setItem("mood",mood);
+document.getElementById("savedMood").innerText="Saved: "+mood;
+}
+document.getElementById("savedMood").innerText="Saved: "+(localStorage.getItem("mood")||"");
+
+/* GOAL */
+function saveGoal(){
+let goal=document.getElementById("goalInput").value;
+localStorage.setItem("goal",goal);
+document.getElementById("goalDisplay").innerText=goal;
+}
+document.getElementById("goalDisplay").innerText=localStorage.getItem("goal")||"";
+
+/* TODO */
+function addTodo(){
+let val=document.getElementById("todoInput").value;
+if(!val)return;
+let arr=JSON.parse(localStorage.getItem("todos")||"[]");
+arr.push(val);
+localStorage.setItem("todos",JSON.stringify(arr));
+renderTodo();
+}
+function renderTodo(){
+let list=document.getElementById("todoList");
+list.innerHTML="";
+let arr=JSON.parse(localStorage.getItem("todos")||"[]");
+arr.forEach((t,i)=>{
+list.innerHTML+=`<div class="todo-item">${t}<button onclick="delTodo(${i})">❌</button></div>`;
+});
+}
+function delTodo(i){
+let arr=JSON.parse(localStorage.getItem("todos"));
+arr.splice(i,1);
+localStorage.setItem("todos",JSON.stringify(arr));
+renderTodo();
+}
+renderTodo();
+
+/* PLANNER */
+function addPlan(){
+let val=document.getElementById("plannerInput").value;
+if(!val)return;
+let arr=JSON.parse(localStorage.getItem("plans")||"[]");
+arr.push(val);
+localStorage.setItem("plans",JSON.stringify(arr));
+renderPlan();
+}
+function renderPlan(){
+let list=document.getElementById("plannerList");
+list.innerHTML="";
+let arr=JSON.parse(localStorage.getItem("plans")||"[]");
+arr.forEach((p,i)=>{
+list.innerHTML+=`<div class="todo-item">${p}<button onclick="delPlan(${i})">❌</button></div>`;
+});
+}
+function delPlan(i){
+let arr=JSON.parse(localStorage.getItem("plans"));
+arr.splice(i,1);
+localStorage.setItem("plans",JSON.stringify(arr));
+renderPlan();
+}
+renderPlan();
+
+/* WATER */
+let water=parseInt(localStorage.getItem("water")||0);
+function addWater(){
+if(water<8){water++;localStorage.setItem("water",water);updateWater();}
+}
+function updateWater(){
+document.getElementById("waterCount").innerText=water;
+document.getElementById("waterProgress").style.width=(water/8*100)+"%";
+}
+updateWater();
+
+/* STREAK */
+let streak=parseInt(localStorage.getItem("streak")||0);
+document.getElementById("streakCount").innerText=streak;
+function updateStreak(){
+streak++;
+localStorage.setItem("streak",streak);
+document.getElementById("streakCount").innerText=streak;
+}
+
+/* POMODORO */
+let time=1500,interval;
+let count=parseInt(localStorage.getItem("pomodoroCount")||0);
+document.getElementById("pomodoroCount").innerText=count;
+function startTimer(){
+clearInterval(interval);
+interval=setInterval(()=>{
+if(time>0){
+time--;
+let m=Math.floor(time/60);
+let s=time%60;
+document.getElementById("timer").innerText=`${m}:${s<10?'0':''}${s}`;
+}else{
+clearInterval(interval);
+count++;
+localStorage.setItem("pomodoroCount",count);
+document.getElementById("pomodoroCount").innerText=count;
+}
+},1000);
+}
+function resetTimer(){clearInterval(interval);time=1500;document.getElementById("timer").innerText="25:00";}
+
+/* FLASHCARDS */
+let cards=JSON.parse(localStorage.getItem("cards")||"[]");
+let current=0,flipped=false;
+function addFlashcard(){
+let q=document.getElementById("flashQ").value;
+let a=document.getElementById("flashA").value;
+if(!q||!a)return;
+cards.push({q,a});
+localStorage.setItem("cards",JSON.stringify(cards));
+showCard();
+}
+function showCard(){
+if(cards.length===0){document.getElementById("flashcardBox").innerText="No cards yet";return;}
+flipped=false;
+document.getElementById("flashcardBox").innerText=cards[current].q;
+}
+function flipCard(){
+if(cards.length===0)return;
+flipped=!flipped;
+document.getElementById("flashcardBox").innerText=flipped?cards[current].a:cards[current].q;
+}
+showCard();
+
+/* SOUND */
+function playLofi(){stopSound();document.getElementById("lofi").play();}
+function playRain(){stopSound();document.getElementById("rain").play();}
+function stopSound(){
+document.getElementById("lofi").pause();
+document.getElementById("rain").pause();
+}
+</script>
+
+</body>
+</html>
